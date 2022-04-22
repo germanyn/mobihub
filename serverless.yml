@@ -1,0 +1,32 @@
+service: crawler
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: "*"
+
+useDotenv: true
+
+functions:
+  itaivan-dispatcher:
+    handler: crawlers/itaivan/itaivan-dispatcher.handler
+  itaivan-crawler:
+    handler: crawlers/itaivan/itaivan-crawler.handler
+  vivenda-dispatcher:
+    handler: crawlers/vivenda/dispatcher.handler
+  vivenda-crawler:
+    handler: crawlers/vivenda/crawler.handler
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 3674
+    lambdaPort: 3675
