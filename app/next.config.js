@@ -26,10 +26,3 @@ module.exports = {
   },
   plugins: [["@babel/plugin-proposal-decorators", { legacy: true }]],
 };
-
-// // next.config.js
-// const withTM = require('next-transpile-modules')(['@mobihub/core']); // pass the modules you would like to see transpiled
-
-// module.exports = withTM({
-//   reactStrictMode: true,
-// });
