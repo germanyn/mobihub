@@ -2,10 +2,6 @@
   "name": "@mobihub/core",
   "version": "5.0.0",
   "private": true,
-  "scripts": {
-    "dev": "sls offline",
-    "invoke": "aws lambda invoke /dev/null --endpoint-url http://localhost:3675 --function-name "
-  },
   "dependencies": {
     "@typegoose/typegoose": "^9.7.1",
     "axios": "^0.26.1",
