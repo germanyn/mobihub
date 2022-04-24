@@ -1,5 +1,5 @@
-import dbConnect from "../libs/dbConnect"
-import { OfertaDeImovelModel } from "../libs/schemas/OfertaDeImovel"
+// import dbConnect from "../libs/dbConnect"
+// import { OfertaDeImovelModel } from "../libs/schemas/OfertaDeImovel"
 import { Modalidade } from "../types/OfertaDeImovel"
 
 export type ListarOfertasParams = {
@@ -18,29 +18,30 @@ export class OfertaDeImovelService {
         minimo,
         maximo,
     }: ListarOfertasParams = {}) {
-        await dbConnect()
-        return OfertaDeImovelModel
-            .find({
-                ...modalidades && {
-                    modalidade: {
-                        $in: modalidades,
-                    },
-                },
-                ...(minimo || maximo) && {
-                    valor: {
-                        ...minimo && {
-                            $gte: minimo,
-                        },
-                        ...maximo && {
-                            $lte: maximo,
-                        },
-                    },
-                },
-            })
-            .skip(skip || 0)
-            .limit(limit || 20)
-            .lean()
-            .exec()
+        return []
+        // await dbConnect()
+        // return OfertaDeImovelModel
+        //     .find({
+        //         ...modalidades && {
+        //             modalidade: {
+        //                 $in: modalidades,
+        //             },
+        //         },
+        //         ...(minimo || maximo) && {
+        //             valor: {
+        //                 ...minimo && {
+        //                     $gte: minimo,
+        //                 },
+        //                 ...maximo && {
+        //                     $lte: maximo,
+        //                 },
+        //             },
+        //         },
+        //     })
+        //     .skip(skip || 0)
+        //     .limit(limit || 20)
+        //     .lean()
+        //     .exec()
     }
     // static get(id: string) {
     //     return articles.find(article => article.id === id)
