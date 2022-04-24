@@ -9,6 +9,9 @@ const aliasPathsToResolve = [
 module.exports = () => {
   return {
     reactStrictMode: true,
+    env: {
+      MONGODB_URI: process.env.MONGODB_URI,
+    },
     webpack(config, { defaultLoaders }) {
       config.module.rules.push({
         test: /\.(js|jsx|ts|tsx)$/,
