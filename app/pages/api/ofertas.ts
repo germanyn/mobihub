@@ -1,6 +1,6 @@
+import { OfertaDeImovelService } from '@mobihub/core/src/services/OfertaDeImovelService';
+import { OfertaDeImovel } from '@mobihub/core/src/types/OfertaDeImovel';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { OfertaDeImovelService } from '../../services/OfertaDeImovelService'
-import { OfertaDeImovel } from '../../types/OfertaDeImovel'
 
 export type GetOfertasQueryParams = {
   limit: number
