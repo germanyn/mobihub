@@ -3,14 +3,11 @@
   "version": "5.0.0",
   "private": true,
   "scripts": {
-    "db": "docker-compose up",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "sls": "sls offline",
-    "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
-    "invoke": "aws lambda invoke /dev/null --endpoint-url http://localhost:3675 --function-name "
+    "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest"
   },
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.17.9",
