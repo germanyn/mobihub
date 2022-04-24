@@ -23,9 +23,6 @@ import { Modalidade, OfertaDeImovel } from '../../types/OfertaDeImovel';
 class DbOfertaDeImovel implements OfertaDeImovel {
     _id?: string | undefined;
 
-    @prop()
-    name: string;
-
     @prop({ type: String, required: true, enum: Object.values(Modalidade) })
     modalidade: OfertaDeImovel['modalidade'];
 

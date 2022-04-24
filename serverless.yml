@@ -1,15 +1,20 @@
-service: crawler
+org: germanyn
+app: mobihub
+service: mobihub
 
 frameworkVersion: '3'
 
 provider:
   name: aws
   runtime: nodejs14.x
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "lambda:InvokeFunction"
-      Resource: "*"
+  profile: mobihub
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "lambda:InvokeFunction"
+          Resource: "*"
 
 useDotenv: true
 

@@ -3,6 +3,7 @@
   "version": "5.0.0",
   "private": true,
   "scripts": {
+    "db": "docker-compose up",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

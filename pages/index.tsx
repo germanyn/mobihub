@@ -9,17 +9,16 @@ import { OpenInNew } from 'mdi-material-ui';
 import type { GetServerSideProps, NextPage } from 'next';
 import { AppDrawer } from '../components/AppDrawer';
 import { AppToolbar } from '../components/AppToolbar';
-import dbConnect from '../libs/dbConnect';
-import { OfertaDeImovelModel } from '../libs/schemas/OfertaDeImovel';
-import { OfertaDeImovel } from '../types/OfertaDeImovel';
+import { ImobiliariaService } from '../services/ImobiliariaService';
+import { OfertaDeImovelService } from '../services/OfertaDeImovelService';
+import { Imobiliaria } from '../types/Imobiliaria';
+import { Modalidade, OfertaDeImovel } from '../types/OfertaDeImovel';
 
-const drawerWidth = 240;
-
-const Home: NextPage<Props> = ({ ofertas }) => {
+const Home: NextPage<Props> = ({ ofertas, imobiliarias }) => {
   return (
     <Box sx={{ display: 'flex' }}>
       <AppToolbar />
-      <AppDrawer/>
+      <AppDrawer imobiliarias={imobiliarias}/>
       <Box component="main">
         <Toolbar />
         <Container maxWidth="lg">
@@ -91,15 +90,31 @@ const Home: NextPage<Props> = ({ ofertas }) => {
 
 interface Props {
   ofertas: OfertaDeImovel[]
+  imobiliarias: Imobiliaria[]
 }
 
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  const { modalidade, min, max } = query
+  const normalizarModalidades = (modalidade?: string | string[] | undefined): `${Modalidade}`[] | undefined => {
+    if (!modalidade || Array.isArray(modalidade)) return undefined;
+    const lowerCase = modalidade.toLowerCase() as Modalidade
+    if (Object.values(Modalidade).includes(lowerCase)) return [lowerCase];
+    return undefined;
+  }
+  const ofertas = await OfertaDeImovelService.listar({
+    limit: 12,
+    skip: 0,
+    modalidades: normalizarModalidades(modalidade),
+    minimo: (min && typeof min === 'string') ? Number(min) : undefined,
+    maximo: (max && typeof max === 'string') ? Number(max) : undefined,
+  })
 
-export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
-  await dbConnect()
-  const ofertas = await OfertaDeImovelModel.find().limit(20).lean().exec()
+  const imobiliarias = await ImobiliariaService.listar()
+
   return {
     props: {
       ofertas: JSON.parse(JSON.stringify(ofertas)),
+      imobiliarias: JSON.parse(JSON.stringify(imobiliarias)),
     },
   }
 }

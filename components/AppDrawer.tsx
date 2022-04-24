@@ -1,18 +1,24 @@
-import { Box, Drawer, Grid, ToggleButton, ToggleButtonGroup, Toolbar, TextField, InputAdornment } from "@mui/material";
-import { useState } from "react";
+import { Box, Drawer, Grid, InputAdornment, TextField, ToggleButton, ToggleButtonGroup, Toolbar } from "@mui/material";
+import { useRouter } from 'next/router';
 import { drawerWidth } from "../constants";
-import { Modalidade } from "../types/OfertaDeImovel";
+import { Imobiliaria } from "../types/Imobiliaria";
+import Autocomplete from '@mui/material/Autocomplete'
 
-export const AppDrawer = () => {
-    const [modalidades, setModalidades] = useState<Modalidade[]>([Modalidade.VENDA])
+type AppDrawerProps = {
+    imobiliarias: Imobiliaria[]
+}
 
-    const handleModalidades = (
-        event: React.MouseEvent<HTMLElement>,
-        newDevices: Modalidade[],
-    ) => {
-        if (!newDevices.length) return
-        setModalidades(newDevices);
-    };
+export const AppDrawer: React.VFC<AppDrawerProps> = ({ imobiliarias }) => {
+    const router = useRouter();
+
+    const setQueryParameter = (chave: string, valor: string) => {
+        const query = router.query
+        !valor
+            ? delete query[chave]
+            : query[chave] = valor
+        router.push({ query })
+    }
+
     return (
         <Drawer
             variant="permanent"
@@ -37,11 +43,12 @@ export const AppDrawer = () => {
                 >
                     <Grid item xs={12}>
                         <ToggleButtonGroup
-                            value={modalidades}
-                            onChange={handleModalidades}
+                            value={router.query.modalidade}
+                            onChange={(_, valor) => setQueryParameter('modalidade', valor)}
                             aria-label="device"
                             color="primary"
                             fullWidth
+                            exclusive
                         >
                             <ToggleButton value="venda" aria-label="venda">
                                 Venda
@@ -55,18 +62,36 @@ export const AppDrawer = () => {
                         <TextField
                             label="Mín."
                             variant="outlined"
+                            onChange={(event) => setQueryParameter('min', event.target.value)}
                             InputProps={{
-                              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                startAdornment: <InputAdornment position="start">R$</InputAdornment>,
                             }}
+                            type='search'
                         />
-                        </Grid>
-                        <Grid item xs={6}>
+                    </Grid>
+                    <Grid item xs={6}>
                         <TextField
                             label="Máx."
                             variant="outlined"
+                            onChange={(event) => setQueryParameter('max', event.target.value)}
                             InputProps={{
-                              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                startAdornment: <InputAdornment position="start">R$</InputAdornment>,
                             }}
+                            type='search'
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Autocomplete
+                            multiple
+                            options={imobiliarias}
+                            getOptionLabel={option => option.nome}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="outlined"
+                                    label="Imobiliarias"
+                                />
+                            )}
                         />
                     </Grid>
                 </Grid>
