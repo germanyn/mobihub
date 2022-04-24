@@ -1,15 +1,14 @@
 // https://www.vivendaimoveis.com/imoveis/a-venda/jaragua-do-sul
 
 const chromium = require('chrome-aws-lambda');
-import * as cheerio from 'cheerio';
 import mongoose from 'mongoose';
-import dbConnect from '../../libs/dbConnect';
-import { OfertaDeImovelModel } from '../../libs/schemas/OfertaDeImovel';
-import { Modalidade, OfertaDeImovel } from '../../types/OfertaDeImovel';
 import { VivendaCrawlerParams } from './types/VivendaCrawler';
 import { asyncFilter } from '../utils';
 import axios from 'axios';
 import { ImovelDaVivenda, VivendaResponse } from './types/VivendaResponse';
+import dbConnect from '@mobihub/core/src/libs/dbConnect';
+import { OfertaDeImovelModel } from '@mobihub/core/src/libs/schemas/OfertaDeImovel';
+import { Modalidade, OfertaDeImovel } from '@mobihub/core/src/types/OfertaDeImovel';
 
 async function lerOfertasDaPagina(modalidade: Modalidade, imoveisDaVivenda: ImovelDaVivenda[]): Promise<OfertaDeImovel[]> {
     const ofertas: OfertaDeImovel[] = imoveisDaVivenda.map<OfertaDeImovel>(imovel => ({

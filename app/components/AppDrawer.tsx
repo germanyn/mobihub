@@ -1,7 +1,7 @@
 import { Box, Drawer, Grid, InputAdornment, TextField, ToggleButton, ToggleButtonGroup, Toolbar } from "@mui/material";
 import { useRouter } from 'next/router';
 import { drawerWidth } from "../constants";
-import { Imobiliaria } from "../types/Imobiliaria";
+import { Imobiliaria } from "@mobihub/core/src/types/Imobiliaria";
 import Autocomplete from '@mui/material/Autocomplete'
 
 type AppDrawerProps = {

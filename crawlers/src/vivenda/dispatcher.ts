@@ -1,15 +1,15 @@
 import { Lambda } from 'aws-sdk'
-import { Modalidade } from '../../types/OfertaDeImovel'
-import { ItaivanCrawlerParams } from './types/ItaivanCrawler'
+import { Modalidade } from '@mobihub/core/src/types/OfertaDeImovel'
+import { VivendaCrawlerParams } from './types/VivendaCrawler'
 
 const lambda = new Lambda({
     apiVersion: '2015-03-31',
     endpoint: process.env.IS_OFFLINE ? 'http://localhost:3675' : undefined,
 })
 
-const invokeCrawler = (payload: ItaivanCrawlerParams) =>
+const invokeCrawler = (payload: VivendaCrawlerParams) =>
     lambda.invoke({
-        FunctionName: 'crawler-dev-itaivan-crawler',
+        FunctionName: 'crawler-dev-vivenda-crawler',
         InvocationType: 'Event',
         Payload: JSON.stringify(payload),
     }).promise()
@@ -21,9 +21,9 @@ export const handler = async () => {
     ])
     return {
         statusCode: 200,
-        body: {
+        body: JSON.stringify({
             status: "success",
             response,
-        },
+        }),
     }
 }
