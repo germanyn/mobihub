@@ -25,7 +25,7 @@
     "chrome-aws-lambda": "^10.1.0",
     "mdi-material-ui": "^7.2.0",
     "mongoose": "^6.2.9",
-    "next": "latest",
+    "next": "^11.1.2",
     "puppeteer-core": "^13.5.2",
     "react": "latest",
     "react-dom": "latest",
