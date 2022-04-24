@@ -6,8 +6,7 @@ https://github.com/vercel/next.js/blob/canary/examples/with-mongodb-mongoose/uti
 **/
 
 
-// const MONGODB_URI = process.env.MONGODB_URI!
-const MONGODB_URI = ''
+const MONGODB_URI = process.env.MONGODB_URI!
 console.log('MONGODB_URI', MONGODB_URI)
 
 if (!MONGODB_URI) {
