@@ -8,8 +8,9 @@ const aliasPathsToResolve = [
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
+  productionBrowserSourceMaps: true,
   env: {
-    // MONGODB_URI: process.env.MONGODB_URI,
+    MONGODB_URI: process.env.MONGODB_URI,
   },
   webpack(config, { defaultLoaders }) {
     config.module.rules.push({
