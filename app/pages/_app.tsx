@@ -1,3 +1,4 @@
+import "source-map-support/register";
 import * as React from 'react';
 import Head from 'next/head';
 import { AppProps } from 'next/app';
