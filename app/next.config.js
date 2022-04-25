@@ -9,6 +9,7 @@ const aliasPathsToResolve = [
 module.exports = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
+  target: 'serverless',
   env: {
     MONGODB_URI: process.env.MONGODB_URI,
   },
