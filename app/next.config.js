@@ -1,30 +1,22 @@
-const path = require("path");
-
-// next.config.js
-const aliasPathsToResolve = [
-  { name: "@mobihub/core", path: path.resolve(__dirname, "../core") },
-];
-
-/** @type {import('next').NextConfig} */
-module.exports = {
-  reactStrictMode: true,
-  productionBrowserSourceMaps: true,
-  target: 'serverless',
-  env: {
-    MONGODB_URI: process.env.MONGODB_URI,
-  },
-  webpack(config, { defaultLoaders }) {
-    config.module.rules.push({
-      test: /\.(js|jsx|ts|tsx)$/,
-      include: [path.resolve(__dirname, "../core")],
-      use: [defaultLoaders.babel],
-    });
-
-    /** Resolve aliases */
-    aliasPathsToResolve.forEach((module) => {
-      config.resolve.alias[module.name] = module.path;
-    });
-    return config;
-  },
-  plugins: [["@babel/plugin-proposal-decorators", { legacy: true }]],
-};
+module.exports = function(...args) {
+  let original = require('./next.config.original.1651150630394.js');
+  const finalConfig = {};
+  const target = { target: 'serverless' };
+  if (typeof original === 'function' && original.constructor.name === 'AsyncFunction') {
+    // AsyncFunctions will become promises
+    original = original(...args);
+  }
+  if (original instanceof Promise) {
+    // Special case for promises, as it's currently not supported
+    // and will just error later on
+    return original
+      .then((originalConfig) => Object.assign(finalConfig, originalConfig))
+      .then((config) => Object.assign(config, target));
+  } else if (typeof original === 'function') {
+    Object.assign(finalConfig, original(...args));
+  } else if (typeof original === 'object') {
+    Object.assign(finalConfig, original);
+  }
+  Object.assign(finalConfig, target);
+  return finalConfig;
+}

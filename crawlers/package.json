@@ -3,20 +3,22 @@
   "version": "5.0.0",
   "private": true,
   "scripts": {
-    "dev": "sls offline",
+    "dev": "sls offline --noTimeout",
     "invoke": "aws lambda invoke /dev/null --endpoint-url http://localhost:3675 --function-name "
   },
   "dependencies": {
     "@typegoose/typegoose": "^9.7.1",
+    "@types/webpack": "^5.28.0",
     "axios": "^0.26.1",
     "cheerio": "^1.0.0-rc.10",
     "chrome-aws-lambda": "^10.1.0",
     "mongoose": "^6.2.9",
     "puppeteer-core": "^13.5.2",
-    "serverless-offline": "^8.5.0"
+    "serverless-offline": "^8.5.0",
+    "serverless-webpack": "^5.7.0"
   },
   "devDependencies": {
-    "@mobihub/core": "file:../core",
+    "@mobihub/core": "*",
     "@serverless/typescript": "^3.8.0",
     "aws-sdk": "^2.1106.0",
     "esbuild": "^0.14.30",
@@ -24,8 +26,11 @@
     "serverless": "^3.10.2",
     "serverless-esbuild": "^1.26.1",
     "serverless-plugin-typescript": "^2.1.1",
+    "serverless-webpack": "^5.7.0",
+    "ts-loader": "^9.2.8",
     "ts-node": "^10.7.0",
     "tsconfig-paths": "^3.14.1",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "webpack": "^5.72.0"
   }
 }

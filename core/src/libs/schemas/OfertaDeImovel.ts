@@ -12,7 +12,7 @@ import { Modalidade, OfertaDeImovel } from '../../types/OfertaDeImovel';
                 delete ret.__v;
                 ret.id = ret._id;
                 delete ret._id;
-            }
+            },
         },
     },
     options: {
@@ -20,6 +20,8 @@ import { Modalidade, OfertaDeImovel } from '../../types/OfertaDeImovel';
     },
 })
 @index({ link: 1 })
+@index({ valor: 1 })
+@index({ "imobiliaria.nome": 1 })
 class DbOfertaDeImovel implements OfertaDeImovel {
     _id?: string | undefined;
 

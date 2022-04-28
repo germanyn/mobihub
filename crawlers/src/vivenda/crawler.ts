@@ -1,6 +1,5 @@
 // https://www.vivendaimoveis.com/imoveis/a-venda/jaragua-do-sul
 
-const chromium = require('chrome-aws-lambda');
 import mongoose from 'mongoose';
 import { VivendaCrawlerParams } from './types/VivendaCrawler';
 import { asyncFilter } from '../utils';
@@ -11,6 +10,7 @@ import { OfertaDeImovelModel } from '@mobihub/core/src/libs/schemas/OfertaDeImov
 import { Modalidade, OfertaDeImovel } from '@mobihub/core/src/types/OfertaDeImovel';
 
 async function lerOfertasDaPagina(modalidade: Modalidade, imoveisDaVivenda: ImovelDaVivenda[]): Promise<OfertaDeImovel[]> {
+    debugger
     const ofertas: OfertaDeImovel[] = imoveisDaVivenda.map<OfertaDeImovel>(imovel => ({
         modalidade,
         imobiliaria: {
@@ -23,7 +23,7 @@ async function lerOfertasDaPagina(modalidade: Modalidade, imoveisDaVivenda: Imov
             },
         },
         link: `https://www.vivendaimoveis.com${imovel.url}`,
-        valor: modalidade === Modalidade['ALUGUEL'] ? imovel.rent_price[0] : imovel.sales_price[0],
+        valor: modalidade === Modalidade['ALUGUEL'] ? imovel.rent_price[0] : imovel.sale_price[0],
         descricao: imovel.listing_description,
         fotos: imovel.photos.map(({ picture_thumb }) => picture_thumb),
     }))

@@ -5,9 +5,14 @@
   "scripts": {
     "db": "docker-compose up"
   },
-  "workspaces": [
-    "app",
-    "core",
-    "crawlers"
-  ]
+  "workspaces": {
+    "packages": [
+      "app",
+      "core",
+      "crawlers"
+    ],
+    "nohoist": ["**/serverless*/**"]
+  },
+  "dependencies": {},
+  "devDependencies": {}
 }

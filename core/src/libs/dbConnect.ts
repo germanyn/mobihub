@@ -7,7 +7,6 @@ https://github.com/vercel/next.js/blob/canary/examples/with-mongodb-mongoose/uti
 
 
 const MONGODB_URI = process.env.MONGODB_URI!
-console.log('MONGODB_URI', MONGODB_URI)
 
 /**
  * Global is used here to maintain a cached connection across hot reloads
@@ -23,7 +22,7 @@ if (!cached) {
 async function dbConnect () {
   if (!MONGODB_URI) {
     throw new Error(
-      'Please define the MONGODB_URI environment variable inside .env.local'
+      'MONGODB_URI environment is not defined'
     )
   }
   if (cached.conn) {

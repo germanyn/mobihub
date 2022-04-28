@@ -8,6 +8,7 @@ export type ListarOfertasParams = {
     modalidades?: `${Modalidade}`[]
     minimo?: number
     maximo?: number
+    imobiliarias?: string[]
 }
 
 export class OfertaDeImovelService {
@@ -17,6 +18,7 @@ export class OfertaDeImovelService {
         modalidades,
         minimo,
         maximo,
+        imobiliarias,
     }: ListarOfertasParams = {}) {
         await dbConnect()
         return OfertaDeImovelModel
@@ -24,6 +26,11 @@ export class OfertaDeImovelService {
                 ...modalidades && {
                     modalidade: {
                         $in: modalidades,
+                    },
+                },
+                ...imobiliarias && {
+                    ["imobiliaria.nome"]: {
+                        $in: imobiliarias,
                     },
                 },
                 ...(minimo || maximo) && {
@@ -37,6 +44,7 @@ export class OfertaDeImovelService {
                     },
                 },
             })
+            .sort({ valor: 0 })
             .skip(skip || 0)
             .limit(limit || 20)
             .lean()

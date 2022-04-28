@@ -18,20 +18,25 @@ provider:
 
 useDotenv: true
 
+package:
+  individually: true
+
 functions:
   itaivan-dispatcher:
-    handler: crawlers/itaivan/itaivan-dispatcher.handler
+    handler: src/itaivan/itaivan-dispatcher.handler
   itaivan-crawler:
-    handler: crawlers/itaivan/itaivan-crawler.handler
+    handler: src/itaivan/itaivan-crawler.handler
   vivenda-dispatcher:
-    handler: crawlers/vivenda/dispatcher.handler
+    handler: src/vivenda/dispatcher.handler
   vivenda-crawler:
-    handler: crawlers/vivenda/crawler.handler
+    handler: src/vivenda/crawler.handler
 plugins:
-  - serverless-plugin-typescript
+  - serverless-webpack
   - serverless-offline
 
 custom:
+  webpack:
+    packager: 'yarn'
   serverless-offline:
     httpPort: 3674
     lambdaPort: 3675

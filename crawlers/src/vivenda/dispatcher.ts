@@ -9,7 +9,7 @@ const lambda = new Lambda({
 
 const invokeCrawler = (payload: VivendaCrawlerParams) =>
     lambda.invoke({
-        FunctionName: 'crawler-dev-vivenda-crawler',
+        FunctionName: 'mobihub-dev-vivenda-crawler',
         InvocationType: 'Event',
         Payload: JSON.stringify(payload),
     }).promise()

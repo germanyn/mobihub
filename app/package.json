@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "deploy": "AWS_PROFLE=mobihub components-v1",
     "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest"
   },
   "dependencies": {
@@ -15,7 +16,7 @@
     "@emotion/react": "latest",
     "@emotion/server": "latest",
     "@emotion/styled": "latest",
-    "@mobihub/core": "file:../core",
+    "@mobihub/core": "*",
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
     "@typegoose/typegoose": "^9.7.1",
@@ -36,7 +37,6 @@
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
     "eslint": "latest",
     "eslint-config-next": "latest",
-    "serverless": "^3.15.2",
     "typescript": "^4.6.3"
   }
 }

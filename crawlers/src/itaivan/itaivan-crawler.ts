@@ -1,12 +1,11 @@
 const chromium = require('chrome-aws-lambda');
+import dbConnect from '@mobihub/core/src/libs/dbConnect';
+import { OfertaDeImovelModel } from '@mobihub/core/src/libs/schemas/OfertaDeImovel';
+import { Modalidade, OfertaDeImovel } from '@mobihub/core/src/types/OfertaDeImovel';
 import * as cheerio from 'cheerio';
 import mongoose from 'mongoose';
-import type { Page } from 'puppeteer-core'
-import dbConnect from '../../libs/dbConnect';
-import { OfertaDeImovelModel } from '../../libs/schemas/OfertaDeImovel';
-import { Modalidade, OfertaDeImovel } from '../../types/OfertaDeImovel';
+import type { Page } from 'puppeteer-core';
 import { ItaivanCrawlerParams } from './types/ItaivanCrawler';
-import { asyncFilter } from '../utils';
 
 // const ITEMS_POR_PAGINA = 9
 
@@ -41,7 +40,7 @@ async function lerOfertasDaPagina(modalidade: Modalidade, page: Page): Promise<O
             return this.type === 'text';
         }).text().replace(/\n/g, '').trim();
         const bairro = $(block).find('.ls-loc.block>strong').text()
-        const valor = +$(block).find('.ls-price').text()
+        const valor = +$(block).find('.ls-price').text().replace(/[^\d,]*/g, '').replace(/,/, '.')
         const oferta: OfertaDeImovel = {
             imobiliaria: {
                 nome: 'Itaivan'
@@ -65,7 +64,8 @@ async function lerOfertasDaPagina(modalidade: Modalidade, page: Page): Promise<O
 
 export const handler = async (evento: ItaivanCrawlerParams) => {
     let pagina = evento.pagina || 1
-    const finalidade = evento.modalidade === Modalidade.ALUGUEL ? 'Aluguel' : 'Venda'
+    const modalidade = evento.modalidade || Modalidade.VENDA
+    const finalidade = modalidade === Modalidade.ALUGUEL ? 'Aluguel' : 'Venda'
     const baseUrl = `https://itaivan.com/busca/?finalidade=${finalidade}&cidade%5B%5D=Jaragua+Do+Sul&valor%5B0%5D=&valor%5B1%5D=&area%5B0%5D=&area%5B1%5D=&codigo=&pagina=${pagina}`;
 
     let browser = null;
@@ -91,7 +91,7 @@ export const handler = async (evento: ItaivanCrawlerParams) => {
         const paginas = await lerQuantidadeDePaginas(page)
 
         while(true) {
-            const ofertas = await lerOfertasDaPagina(evento.modalidade, page);
+            const ofertas = await lerOfertasDaPagina(modalidade, page);
             importados += ofertas.length
             await Promise.all(
                 ofertas
@@ -102,7 +102,7 @@ export const handler = async (evento: ItaivanCrawlerParams) => {
                     )
                 ),
             )
-            console.log(`${evento.modalidade}: ${pagina}/${paginas}`)
+            console.log(`${modalidade}: ${pagina}/${paginas}`)
             ;++pagina
             if (pagina > paginas) break
             const nextUrl = `https://itaivan.com/busca/?finalidade=${finalidade}&cidade%5B%5D=Jaragua+Do+Sul&valor%5B0%5D=&valor%5B1%5D=&area%5B0%5D=&area%5B1%5D=&codigo=&pagina=${pagina}`;
