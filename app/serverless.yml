@@ -1,2 +1,4 @@
 nextApplication:
   component: "@sls-next/serverless-component"
+  inputs:
+    domain: "mobihub.shop"
