@@ -1,6 +1,6 @@
 import dbConnect from "../libs/dbConnect"
 import { OfertaDeImovelModel } from "../libs/schemas/OfertaDeImovel"
-import { Modalidade } from "../types/OfertaDeImovel"
+import { Modalidade, OfertaDeImovel } from "../types/OfertaDeImovel"
 
 export type ListarOfertasParams = {
     skip?: number
@@ -19,7 +19,7 @@ export class OfertaDeImovelService {
         minimo,
         maximo,
         imobiliarias,
-    }: ListarOfertasParams = {}) {
+    }: ListarOfertasParams = {}): Promise<OfertaDeImovel[]> {
         await dbConnect()
         return OfertaDeImovelModel
             .find({

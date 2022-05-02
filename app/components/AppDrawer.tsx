@@ -3,8 +3,9 @@ import { useRouter } from 'next/router';
 import { drawerWidth } from "../constants";
 import { Imobiliaria } from "@mobihub/core/src/types/Imobiliaria";
 import Autocomplete from '@mui/material/Autocomplete'
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { normalizarParaArray } from "../utils/array";
+import { QueryStringDeOfertas } from '../types/QueryStringDeOfertas'
 
 type AppDrawerProps = {
     imobiliarias: Imobiliaria[]
@@ -13,16 +14,22 @@ type AppDrawerProps = {
 }
 
 export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = true, onFechar }) => {
-    const router = useRouter();    
-    const theme = useTheme();    
+    const router = useRouter();
+    const query: QueryStringDeOfertas = useMemo(() => router.query, [router.query])
+    const theme = useTheme();
     const éMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const [filtros, setFiltros] = useState(() => query)
 
-    const setQueryParameter = (chave: string, valor: string | string[]) => {
-        const query = router.query
+    const setQueryParameter = (chave: keyof QueryStringDeOfertas, valor?: string | string[]) => {
+        setFiltros({
+            ...filtros,
+            [chave]: valor,
+        })
+        const novaQuery = router.query
         !valor || (Array.isArray(valor) && !valor.length)
-            ? delete query[chave]
-            : query[chave] = valor
-        router.push({ query })
+            ? delete novaQuery[chave]
+            : novaQuery[chave] = valor
+        router.push({ query: novaQuery })
     }
 
     const opcoesDeImobiliarias = useMemo(() => {
@@ -39,16 +46,9 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = tru
                 keepMounted: true, // Better open performance on mobile.
             }}
             sx={{
-                // [theme.breakpoints.down('md')]: {
-                //     width: 240,
-                //     flexShrink: 0,
-                //     [`& .MuiDrawer-paper`]: { width: 240, boxSizing: 'border-box' },
-                // },
-                // [theme.breakpoints.up('md')]: {
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-                // },
+                width: drawerWidth,
+                flexShrink: 0,
+                [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
             }}
         >
             <Toolbar />
@@ -65,7 +65,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = tru
                     </Grid>
                     <Grid item xs={12}>
                         <ToggleButtonGroup
-                            value={router.query.modalidade}
+                            value={filtros.modalidade}
                             onChange={(_, valor) => setQueryParameter('modalidade', valor)}
                             aria-label="device"
                             color="primary"
@@ -83,7 +83,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = tru
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
-                            value={router.query.min}
+                            value={filtros.min || ''}
                             label="Mínimo"
                             variant="outlined"
                             onChange={(event) => setQueryParameter('min', event.target.value)}
@@ -96,7 +96,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = tru
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
-                            value={router.query.max}
+                            value={filtros.max || ''}
                             label="Máximo"
                             variant="outlined"
                             onChange={(event) => setQueryParameter('max', event.target.value)}
@@ -111,7 +111,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = tru
                         <Autocomplete
                             multiple
                             options={opcoesDeImobiliarias}
-                            value={router.query.imobiliarias ? normalizarParaArray(router.query.imobiliarias) : []}
+                            value={filtros.imobiliarias ? normalizarParaArray(filtros.imobiliarias) : []}
                             onChange={(_, valores) => setQueryParameter('imobiliarias', valores)}
                             renderInput={(params) => (
                                 <TextField
