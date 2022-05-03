@@ -1,8 +1,6 @@
 import { OfertaDeImovel } from '@mobihub/core/src/types/OfertaDeImovel'
-import { Button, Card, CardActions, CardContent, CardMedia, Grid, Typography } from '@mui/material'
-import { OpenInNew } from 'mdi-material-ui'
+import { Grid, Typography } from '@mui/material'
 import React from 'react'
-import { formatarMoeda } from '../../utils/formatadores'
 import CardDeOferta from './CardDeOferta'
 import CardSkeleton from './CardSkeleton'
 
