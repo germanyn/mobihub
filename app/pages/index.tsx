@@ -2,23 +2,25 @@
 import { ImobiliariaService } from '@mobihub/core/src/services/ImobiliariaService';
 import { OfertaDeImovelService } from '@mobihub/core/src/services/OfertaDeImovelService';
 import { Imobiliaria } from '@mobihub/core/src/types/Imobiliaria';
-import { OfertaDeImovel, Modalidade } from '@mobihub/core/src/types/OfertaDeImovel';
-import { Button, CardActions, CardContent, CardMedia, Divider, Typography } from '@mui/material';
+import { Modalidade, OfertaDeImovel } from '@mobihub/core/src/types/OfertaDeImovel';
+import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
-import { OpenInNew, ChevronDownCircleOutline, HomeHeart } from 'mdi-material-ui';
+import { HomeHeart } from 'mdi-material-ui';
 import type { GetServerSideProps, NextPage } from 'next';
 import { useState } from 'react';
 import { AppDrawer } from '../components/AppDrawer';
 import { AppToolbar } from '../components/AppToolbar';
 import { normalizarParaArray } from '../utils/array';
-import { formatarMoeda } from '../utils/formatadores';
+import { useNextLoading } from '../hooks/useNextLoading'
+import GridDeOfertas from '../components/ofertas/GridDeOfertas';
+
 
 const Home: NextPage<Props> = ({ ofertas, imobiliarias }) => {
   const [drawer, setDrawer] = useState(false)
+  const [loading] = useNextLoading()
   return (
     <Box sx={{ display: 'flex' }}>
       <AppToolbar onFiltroClick={() => setDrawer(!drawer)} />
@@ -27,7 +29,7 @@ const Home: NextPage<Props> = ({ ofertas, imobiliarias }) => {
         aberto={drawer}
         onFechar={() => setDrawer(false)}
       />
-      <Box component="main">
+      <Box component="main" sx={{ flex: 1 }}>
         <Toolbar />
         <Container maxWidth="lg">
           <Box
@@ -39,7 +41,7 @@ const Home: NextPage<Props> = ({ ofertas, imobiliarias }) => {
               alignItems: 'center',
             }}
           >
-            <Grid container spacing={2}>
+            <Grid container spacing={2} >
               <Grid item xs={12} textAlign='center'>
                 <Typography
                   variant="h6"
@@ -51,57 +53,10 @@ const Home: NextPage<Props> = ({ ofertas, imobiliarias }) => {
                 </Typography>
                 <HomeHeart color='secondary' fontSize='large' />
               </Grid>
-              {ofertas.map(oferta =>
-                <Grid item xs={12} md={4} key={oferta._id}>
-                  <Card>
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image={oferta.fotos?.[0]}
-                    />
-                    <CardContent>
-                      <Typography variant="h6" component="div">
-                        {oferta.imovel.endereco.bairro}
-                      </Typography>
-                      <Typography gutterBottom variant="body1" component="div">
-                        {oferta.imovel.endereco.cidade}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        gutterBottom
-                        style={{
-                          lineClamp: 2,
-                          height: '40px',
-                          textOverflow: 'ellipsis',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        {oferta.descricao || <div>&nbsp;</div>}
-                      </Typography>
-                      <Typography variant="h6" sx={{ textTransform: 'capitalize' }} >
-                        {oferta.modalidade}
-                      </Typography>
-                      <Typography variant="h5">
-                        {formatarMoeda(oferta.valor)}
-                      </Typography>
-                      <Typography variant="caption" component="div">
-                        Imobiliária {oferta.imobiliaria.nome}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button
-                        size="small"
-                        color='primary'
-                        variant='text'
-                        href={oferta.link}
-                        target='_blank'
-                        endIcon={<OpenInNew />}
-                      >Detalhes</Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              )}
+              <GridDeOfertas
+                loading={loading}
+                ofertas={ofertas}
+              />
             </Grid>
           </Box>
         </Container>
