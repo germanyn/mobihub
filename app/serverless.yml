@@ -2,3 +2,16 @@ nextApplication:
   component: "@sls-next/serverless-component"
   inputs:
     domain: "mobihub.shop"
+    cloudfront: 
+      comment: "Mobihub APP"
+      waitBeforeInvalidate: false
+      defaults:
+        forward:
+          headers:
+            [
+              CloudFront-Is-Desktop-Viewer,
+              CloudFront-Is-Mobile-Viewer,
+              CloudFront-Is-Tablet-Viewer,
+              User-Agent
+            ]
+     

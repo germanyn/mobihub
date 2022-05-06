@@ -22,7 +22,7 @@ import { Modalidade, OfertaDeImovel } from '../../types/OfertaDeImovel';
 @index({ link: 1 })
 @index({ valor: 1 })
 @index({ "imobiliaria.nome": 1 })
-class DbOfertaDeImovel implements OfertaDeImovel {
+export class DbOfertaDeImovel implements OfertaDeImovel {
     _id?: string | undefined;
 
     @prop({ type: String, required: true, enum: Object.values(Modalidade) })

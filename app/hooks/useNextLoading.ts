@@ -3,14 +3,13 @@ import { useEffect, useState } from "react"
 
 export function useNextLoading() {
     const state = useState(false)
+    const setLoading = state[1];
     useEffect(() => {
       const start = () => {
-        console.log("start");
-        state[1](true);
+        setLoading(true);
       };
       const end = () => {
-        console.log("findished");
-        state[1](false);
+        setLoading(false);
       };
       Router.events.on("routeChangeStart", start);
       Router.events.on("routeChangeComplete", end);

@@ -19,9 +19,6 @@ const CardDeOferta: React.FC<Props> = ({ oferta }) => {
                 <Typography variant="h6" component="div">
                     {oferta.imovel.endereco.bairro}
                 </Typography>
-                <Typography gutterBottom variant="body1" component="div">
-                    {oferta.imovel.endereco.cidade}
-                </Typography>
                 <Typography
                     variant="body2"
                     color="text.secondary"

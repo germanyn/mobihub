@@ -6,6 +6,7 @@ import Autocomplete from '@mui/material/Autocomplete'
 import { useMemo, useState } from "react";
 import { normalizarParaArray } from "../utils/array";
 import { QueryStringDeOfertas } from '../types/QueryStringDeOfertas'
+import { bairros } from "../constantes/bairros";
 
 type AppDrawerProps = {
     imobiliarias: Imobiliaria[]
@@ -13,7 +14,11 @@ type AppDrawerProps = {
     onFechar?: () => void
 }
 
-export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = true, onFechar }) => {
+export const AppDrawer: React.FC<AppDrawerProps> = ({
+    imobiliarias,
+    aberto = true,
+    onFechar,
+}) => {
     const router = useRouter();
     const query: QueryStringDeOfertas = useMemo(() => router.query, [router.query])
     const theme = useTheme();
@@ -41,18 +46,19 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = tru
             variant={éMobile ? "temporary" : "permanent"}
             open={aberto}
             onClose={() => onFechar && onFechar()}
-            anchor={éMobile ? "right" : "left"}
+            anchor={éMobile ? "bottom" : "left"}
             ModalProps={{
                 keepMounted: true, // Better open performance on mobile.
             }}
             sx={{
                 width: drawerWidth,
                 flexShrink: 0,
-                [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                zIndex: 1051,
+                [`& .MuiDrawer-paper`]: { width: éMobile ? undefined : drawerWidth, boxSizing: 'border-box' },
             }}
         >
-            <Toolbar />
-            <Box sx={{ overflow: 'auto', flexGrow: 1, m: 1 }}>
+            {!éMobile && <Toolbar />}
+            <Box sx={{ overflow: 'auto', flexGrow: 1, m: 2, mb: 4 }}>
                 <Grid
                     container
                     spacing={2}
@@ -82,6 +88,23 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = tru
                         </ToggleButtonGroup>
                     </Grid>
                     <Grid item xs={12}>
+                        <Autocomplete
+                            multiple
+                            options={bairros}
+                            value={filtros.bairros ? normalizarParaArray(filtros.bairros) : []}
+                            onChange={(_, valores) => setQueryParameter('bairros', valores)}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="outlined"
+                                    label="Bairros"
+                                />
+                            )}
+                            size="small"
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
                         <TextField
                             value={filtros.min || ''}
                             label="Mínimo"
@@ -92,6 +115,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = tru
                             }}
                             type='search'
                             size="small"
+                            fullWidth
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -105,6 +129,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = tru
                             }}
                             type='search'
                             size="small"
+                            fullWidth
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -121,6 +146,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({ imobiliarias, aberto = tru
                                 />
                             )}
                             size="small"
+                            fullWidth
                         />
                     </Grid>
                 </Grid>

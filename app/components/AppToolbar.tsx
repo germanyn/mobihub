@@ -1,5 +1,5 @@
-import { AppBar, Box, Button, Hidden, Toolbar, Typography } from "@mui/material";
-import { Filter, HomeMapMarker } from 'mdi-material-ui';
+import { AppBar, Box, Fab, Hidden, Toolbar, Typography } from "@mui/material";
+import { HomeMapMarker, Menu } from 'mdi-material-ui';
 
 type AppToolbarProps = {
     onMenuClick?: () => void
@@ -28,16 +28,5 @@ export const AppToolbar: React.FC<AppToolbarProps> = ({ onFiltroClick }) =>
                 MobiHub
             </Typography>
             <Box flex={1} />
-            <Hidden smUp>
-                <Button
-                    variant="outlined"
-                    endIcon={<Filter />}
-                    color="inherit"
-                    aria-label="abrir filtro"
-                    onClick={onFiltroClick}
-                >
-                    Filtrar
-                </Button>
-            </Hidden>
         </Toolbar>
     </AppBar>

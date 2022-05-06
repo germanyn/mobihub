@@ -5,4 +5,5 @@ export type QueryStringDeOfertas = {
     min?: `${number}`
     max?: `${number}`
     imobiliarias?: string[]
+    bairros?: string[]
 }
