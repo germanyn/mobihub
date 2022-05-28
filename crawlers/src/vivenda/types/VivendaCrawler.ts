@@ -1,6 +1,4 @@
 import { Modalidade } from '@mobihub/core/src/types/OfertaDeImovel';
+import { BaseCrawlerParams } from '../../shared/BaseCrawler';
 
-export interface VivendaCrawlerParams {
-    modalidade: Modalidade
-    pagina?: number
-}
+export type VivendaCrawlerParams = BaseCrawlerParams

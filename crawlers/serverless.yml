@@ -30,6 +30,10 @@ functions:
     handler: src/vivenda/dispatcher.handler
   vivenda-crawler:
     handler: src/vivenda/crawler.handler
+  # haus-dispatcher:
+  #   handler: src/haus/dispatcher.handler
+  haus-crawler:
+    handler: src/haus/crawler.handler
 plugins:
   - serverless-webpack
   - serverless-offline

@@ -1,36 +1,45 @@
 
 import { ImobiliariaService } from '@mobihub/core/src/services/ImobiliariaService';
-import { FiltrosDeOfertas, OfertaDeImovelService } from '@mobihub/core/src/services/OfertaDeImovelService';
+import { FiltrosDeOfertas } from '@mobihub/core/src/services/OfertaDeImovelService';
 import { Imobiliaria } from '@mobihub/core/src/types/Imobiliaria';
-import { Modalidade, OfertaDeImovel } from '@mobihub/core/src/types/OfertaDeImovel';
-import { Fab, Hidden, Pagination, Stack, Typography } from '@mui/material';
+import { Fab, Hidden, Pagination, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
+import { AxiosRequestConfig } from 'axios';
 import { Magnify } from 'mdi-material-ui';
-import type { GetServerSideProps, NextPage } from 'next';
+import type { GetStaticProps, NextPage } from 'next';
+import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
+import { useUpdateEffect } from 'react-use';
+import useSWR from 'swr';
 import { AppDrawer } from '../components/AppDrawer';
 import { AppToolbar } from '../components/AppToolbar';
-import { normalizarParaArray } from '../utils/array';
-import { useNextLoading } from '../hooks/useNextLoading'
 import GridDeOfertas from '../components/ofertas/GridDeOfertas';
-import { useRouter } from 'next/router';
+import { axiosInstace } from '../utils/axios';
+import { parsearQueryParaFiltroDeOfertas } from '../utils/filtros';
 
 const ITEMS_POR_PAGINA = 12
 
-const Home: NextPage<Props> = ({ ofertas, imobiliarias, totalDeOfertas }) => {
+const fetcher = (url: string, config?: AxiosRequestConfig) => axiosInstace.get(url, config).then(({ data }) => data)
+
+const Home: NextPage<Props> = ({ imobiliarias }) => {
+  const totalDeOfertas = 0;
   const [drawer, setDrawer] = useState(false)
-  const [loading] = useNextLoading()
   const paginas = Math.ceil(totalDeOfertas / ITEMS_POR_PAGINA)
   const router = useRouter();
-  const query: { pagina?: number } = useMemo(() => router.query, [router.query])
+  const query = useMemo(() => router.query, [router.query])
   const [pagina, setPagina] = useState(() => Number(query.pagina) || 1)
+
+  const filtroDeOfertas: FiltrosDeOfertas = parsearQueryParaFiltroDeOfertas(query)
+  const { data, mutate } = useSWR('/api/ofertas', (url) => fetcher(url, { params: filtroDeOfertas }))
+
+  const ofertas = data || [];
+  const loading = !data
 
   const handleChangePagina = (_event: React.ChangeEvent<unknown>, valor: number) => {
     setPagina(valor)
-    console.log(valor)
     router.push({
       query: {
         ...query,
@@ -39,18 +48,22 @@ const Home: NextPage<Props> = ({ ofertas, imobiliarias, totalDeOfertas }) => {
     })
   }
 
+  useUpdateEffect(() => {
+    mutate()
+  }, [query])
+
   return (
     <Box sx={{ display: 'flex' }}>
       <AppToolbar onFiltroClick={() => setDrawer(!drawer)} />
       <Hidden smUp>
-          <Fab
-              aria-label="abrir o filtro"
-              onClick={() => setDrawer(!drawer)}
-              color="primary"
-              sx={{ position: 'fixed', bottom: 16, right: 16 }}
-          >
-              <Magnify />
-          </Fab>
+        <Fab
+          aria-label="abrir o filtro"
+          onClick={() => setDrawer(!drawer)}
+          color="primary"
+          sx={{ position: 'fixed', bottom: 16, right: 16 }}
+        >
+          <Magnify />
+        </Fab>
       </Hidden>
       <AppDrawer
         imobiliarias={imobiliarias}
@@ -101,45 +114,55 @@ const Home: NextPage<Props> = ({ ofertas, imobiliarias, totalDeOfertas }) => {
 };
 
 interface Props {
-  ofertas: OfertaDeImovel[]
+  // ofertas: OfertaDeImovel[]
   imobiliarias: Imobiliaria[]
-  totalDeOfertas: number
+  // totalDeOfertas: number
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query, req }) => {
-  const { modalidade, min, max, imobiliarias, bairros, pagina = 1 } = query
+// export const getServerSideProps: GetServerSideProps<Props> = async ({ query, req }) => {
+//   const { modalidade, min, max, imobiliarias, bairros, pagina = 1 } = query
 
-  const normalizarModalidades = (modalidade?: string | string[] | undefined): `${Modalidade}`[] | undefined => {
-    if (!modalidade || Array.isArray(modalidade)) return undefined;
-    const lowerCase = modalidade.toLowerCase() as Modalidade
-    if (Object.values(Modalidade).includes(lowerCase)) return [lowerCase];
-    return undefined;
-  }
-  const filtroDeOfertas: FiltrosDeOfertas = {
-    modalidades: normalizarModalidades(modalidade),
-    minimo: (min && typeof min === 'string') ? Number(min) : undefined,
-    maximo: (max && typeof max === 'string') ? Number(max) : undefined,
-    imobiliarias: imobiliarias ? normalizarParaArray(imobiliarias) : undefined,
-    bairros: bairros ? normalizarParaArray(bairros) : undefined,
-  }
-  const [
-    ofertas,
-    totalDeOfertas,
-    opcoesDeImobiliarias,
-  ] = await Promise.all([
-    OfertaDeImovelService.listar({
-      limit: ITEMS_POR_PAGINA,
-      skip: (Number(pagina) - 1) * ITEMS_POR_PAGINA,
-      ...filtroDeOfertas
-    }),
-    OfertaDeImovelService.totalizar(filtroDeOfertas),
-    ImobiliariaService.listar(),
-  ])
+//   const normalizarModalidades = (modalidade?: string | string[] | undefined): `${Modalidade}`[] | undefined => {
+//     if (!modalidade || Array.isArray(modalidade)) return undefined;
+//     const lowerCase = modalidade.toLowerCase() as Modalidade
+//     if (Object.values(Modalidade).includes(lowerCase)) return [lowerCase];
+//     return undefined;
+//   }
+//   const filtroDeOfertas: FiltrosDeOfertas = {
+//     modalidades: normalizarModalidades(modalidade),
+//     minimo: (min && typeof min === 'string') ? Number(min) : undefined,
+//     maximo: (max && typeof max === 'string') ? Number(max) : undefined,
+//     imobiliarias: imobiliarias ? normalizarParaArray(imobiliarias) : undefined,
+//     bairros: bairros ? normalizarParaArray(bairros) : undefined,
+//   }
+//   const [
+//     ofertas,
+//     totalDeOfertas,
+//     opcoesDeImobiliarias,
+//   ] = await Promise.all([
+//     OfertaDeImovelService.listar({
+//       limit: ITEMS_POR_PAGINA,
+//       skip: (Number(pagina) - 1) * ITEMS_POR_PAGINA,
+//       ...filtroDeOfertas
+//     }),
+//     OfertaDeImovelService.totalizar(filtroDeOfertas),
+//     ImobiliariaService.listar(),
+//   ])
+
+//   return {
+//     props: {
+//       ofertas: JSON.parse(JSON.stringify(ofertas)),
+//       totalDeOfertas,
+//       imobiliarias: JSON.parse(JSON.stringify(opcoesDeImobiliarias)),
+//     },
+//   }
+// }
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const opcoesDeImobiliarias = await ImobiliariaService.listar()
 
   return {
     props: {
-      ofertas: JSON.parse(JSON.stringify(ofertas)),
-      totalDeOfertas,
       imobiliarias: JSON.parse(JSON.stringify(opcoesDeImobiliarias)),
     },
   }

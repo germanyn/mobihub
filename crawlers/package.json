@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "sls offline --noTimeout",
+    "debug": "node --inspect ../node_modules/.bin/serverless offline start",
     "invoke": "aws lambda invoke /dev/null --endpoint-url http://localhost:3675 --function-name "
   },
   "dependencies": {
