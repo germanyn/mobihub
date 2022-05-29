@@ -7,22 +7,20 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
-import { AxiosRequestConfig } from 'axios';
-import { Magnify } from 'mdi-material-ui';
+import Magnify from 'mdi-material-ui/Magnify';
 import type { GetStaticProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
-import { useUpdateEffect } from 'react-use';
-import useSWR from 'swr';
+import { useQuery, useQueryClient } from 'react-query';
+import useUpdateEffect from 'react-use/lib/useUpdateEffect';
 import { AppDrawer } from '../components/AppDrawer';
 import { AppToolbar } from '../components/AppToolbar';
 import GridDeOfertas from '../components/ofertas/GridDeOfertas';
-import { axiosInstace } from '../utils/axios';
+import { fetchOfertas } from '../fetch/fetchOfertas';
 import { parsearQueryParaFiltroDeOfertas } from '../utils/filtros';
 
 const ITEMS_POR_PAGINA = 12
-
-const fetcher = (url: string, config?: AxiosRequestConfig) => axiosInstace.get(url, config).then(({ data }) => data)
+const QUERY_KEY = 'ofertas'
 
 const Home: NextPage<Props> = ({ imobiliarias }) => {
   const totalDeOfertas = 0;
@@ -31,12 +29,12 @@ const Home: NextPage<Props> = ({ imobiliarias }) => {
   const router = useRouter();
   const query = useMemo(() => router.query, [router.query])
   const [pagina, setPagina] = useState(() => Number(query.pagina) || 1)
+  const queryClient = useQueryClient()
 
   const filtroDeOfertas: FiltrosDeOfertas = parsearQueryParaFiltroDeOfertas(query)
-  const { data, mutate } = useSWR('/api/ofertas', (url) => fetcher(url, { params: filtroDeOfertas }))
-
-  const ofertas = data || [];
-  const loading = !data
+  const { data: ofertas, refetch, isLoading } = useQuery(QUERY_KEY, ({ signal }) => fetchOfertas(filtroDeOfertas, {
+    signal,
+  }))
 
   const handleChangePagina = (_event: React.ChangeEvent<unknown>, valor: number) => {
     setPagina(valor)
@@ -49,7 +47,8 @@ const Home: NextPage<Props> = ({ imobiliarias }) => {
   }
 
   useUpdateEffect(() => {
-    mutate()
+    queryClient.cancelQueries(QUERY_KEY)
+    refetch()
   }, [query])
 
   return (
@@ -93,7 +92,7 @@ const Home: NextPage<Props> = ({ imobiliarias }) => {
                 </Typography>
               </Grid>
               <GridDeOfertas
-                loading={loading}
+                loading={isLoading}
                 ofertas={ofertas}
               />
               <Grid item xs={12}>
@@ -118,45 +117,6 @@ interface Props {
   imobiliarias: Imobiliaria[]
   // totalDeOfertas: number
 }
-
-// export const getServerSideProps: GetServerSideProps<Props> = async ({ query, req }) => {
-//   const { modalidade, min, max, imobiliarias, bairros, pagina = 1 } = query
-
-//   const normalizarModalidades = (modalidade?: string | string[] | undefined): `${Modalidade}`[] | undefined => {
-//     if (!modalidade || Array.isArray(modalidade)) return undefined;
-//     const lowerCase = modalidade.toLowerCase() as Modalidade
-//     if (Object.values(Modalidade).includes(lowerCase)) return [lowerCase];
-//     return undefined;
-//   }
-//   const filtroDeOfertas: FiltrosDeOfertas = {
-//     modalidades: normalizarModalidades(modalidade),
-//     minimo: (min && typeof min === 'string') ? Number(min) : undefined,
-//     maximo: (max && typeof max === 'string') ? Number(max) : undefined,
-//     imobiliarias: imobiliarias ? normalizarParaArray(imobiliarias) : undefined,
-//     bairros: bairros ? normalizarParaArray(bairros) : undefined,
-//   }
-//   const [
-//     ofertas,
-//     totalDeOfertas,
-//     opcoesDeImobiliarias,
-//   ] = await Promise.all([
-//     OfertaDeImovelService.listar({
-//       limit: ITEMS_POR_PAGINA,
-//       skip: (Number(pagina) - 1) * ITEMS_POR_PAGINA,
-//       ...filtroDeOfertas
-//     }),
-//     OfertaDeImovelService.totalizar(filtroDeOfertas),
-//     ImobiliariaService.listar(),
-//   ])
-
-//   return {
-//     props: {
-//       ofertas: JSON.parse(JSON.stringify(ofertas)),
-//       totalDeOfertas,
-//       imobiliarias: JSON.parse(JSON.stringify(opcoesDeImobiliarias)),
-//     },
-//   }
-// }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const opcoesDeImobiliarias = await ImobiliariaService.listar()

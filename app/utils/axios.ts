@@ -1,6 +1,6 @@
 import axios from "axios"
-import qs from 'qs';
+import { stringify } from 'qs';
 
 export const axiosInstace = axios.create({
-    paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat'})
+    paramsSerializer: params => stringify(params, {arrayFormat: 'repeat'})
 })

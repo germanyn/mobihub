@@ -34,7 +34,9 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({
         !valor || (Array.isArray(valor) && !valor.length)
             ? delete novaQuery[chave]
             : novaQuery[chave] = valor
-        router.push({ query: novaQuery })
+        router.push({ query: novaQuery }, undefined, {
+            shallow: true,
+        })
     }
 
     const opcoesDeImobiliarias = useMemo(() => {

@@ -1,5 +1,6 @@
 import { AppBar, Box, Fab, Hidden, Toolbar, Typography } from "@mui/material";
-import { HomeMapMarker, Menu } from 'mdi-material-ui';
+import Menu  from 'mdi-material-ui/Menu';
+import HomeMapMarker from 'mdi-material-ui/HomeMapMarker';
 
 type AppToolbarProps = {
     onMenuClick?: () => void

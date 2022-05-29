@@ -13,7 +13,7 @@ export default async function handler(
   res: NextApiResponse<OfertaDeImovel[]>
 ) {
   const { limit, offset, ...params } = req.query;
-  const { modalidade, min, max, imobiliarias, bairros } = req.query
+  const { modalidade, minimo, maximo, imobiliarias, bairros } = params
 
   const normalizarModalidades = (modalidade?: string | string[] | undefined): `${Modalidade}`[] | undefined => {
     if (!modalidade || Array.isArray(modalidade)) return undefined;
@@ -23,8 +23,8 @@ export default async function handler(
   }
   const filtroDeOfertas: FiltrosDeOfertas = {
     modalidades: normalizarModalidades(modalidade),
-    minimo: (min && typeof min === 'string') ? Number(min) : undefined,
-    maximo: (max && typeof max === 'string') ? Number(max) : undefined,
+    minimo: (minimo && typeof minimo === 'string') ? Number(minimo) : undefined,
+    maximo: (maximo && typeof maximo === 'string') ? Number(maximo) : undefined,
     imobiliarias: imobiliarias ? normalizarParaArray(imobiliarias) : undefined,
     bairros: bairros ? normalizarParaArray(bairros) : undefined,
   }

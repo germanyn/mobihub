@@ -1,6 +1,6 @@
 import { OfertaDeImovel } from '@mobihub/core/src/types/OfertaDeImovel'
 import { Card, CardMedia, CardContent, Typography, CardActions, Button } from '@mui/material'
-import { OpenInNew } from 'mdi-material-ui'
+import OpenInNew from 'mdi-material-ui/OpenInNew'
 import { formatarMoeda } from '../../utils/formatadores'
 
 type Props = {

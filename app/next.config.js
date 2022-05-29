@@ -1,10 +1,12 @@
+// @ts-check
+
 const path = require("path");
 
-// next.config.js
 const aliasPathsToResolve = [
   { name: "@mobihub/core", path: path.resolve(__dirname, "../core") },
 ];
 
+// @ts-ignore
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
@@ -14,8 +16,9 @@ const configuration = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
   target: 'serverless',
+  compress: true,
   env: {
-    MONGODB_URI: process.env.MONGODB_URI,
+    MONGODB_URI: (/** @type {string} */(process.env.MONGODB_URI)),
   },
   webpack(config, { defaultLoaders }) {
     config.module.rules.push({
